@@ -8,7 +8,7 @@
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
         <ProjectVersion>19.5</ProjectVersion>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -260,10 +260,10 @@
         <DCCReference Include="code\classes\languagehandler.pas"/>
         <DCCReference Include="code\frames\frameQuickData.pas">
             <Form>frameSimpleExport</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="code\units\fileconstants.pas"/>
+        <DCCReference Include="code\classes\vfw.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -295,6 +295,12 @@
             </Platforms>
             <Deployment Version="4">
                 <DeployFile LocalName="LEDMatrixStudio.32.exe" Configuration="Release" Class="ProjectOutput"/>
+                <DeployFile LocalName="LEDMatrixStudio.32.exe" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>LEDMatrixStudio.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="LEDMatrixStudio.64.exe" Configuration="Release" Class="ProjectOutput"/>
                 <DeployFile LocalName="LEDMatrixStudio.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployClass Name="AdditionalDebugSymbols">

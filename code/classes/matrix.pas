@@ -56,7 +56,10 @@ type
 
               procedure SetFromUndo(aUndo : integer);
             end;
-
+const
+  EffectTotal = 192;
+var
+  EffectsArr: array [0 .. EffectTotal*2+2] of integer;
 
 implementation
 

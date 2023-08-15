@@ -10,14 +10,12 @@ object frmExport: TfrmExport
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnConstrainedResize = FormConstrainedResize
   OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -28,6 +26,8 @@ object frmExport: TfrmExport
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
+    ExplicitTop = 589
+    ExplicitWidth = 1178
     DesignSize = (
       1184
       64)
@@ -161,13 +161,14 @@ object frmExport: TfrmExport
       end
     end
     object GroupBox6: TGroupBox
-      Left = 864
+      Left = 846
       Top = 2
       Width = 314
       Height = 55
       Anchors = [akRight, akBottom]
       Caption = '.'
       TabOrder = 1
+      ExplicitLeft = 840
       object bCancel: TBitBtn
         Left = 228
         Top = 21
@@ -358,16 +359,14 @@ object frmExport: TfrmExport
     Top = 0
     Width = 1184
     Height = 595
-    ActivePage = tsCode
+    ActivePage = tsBinary
     Align = alClient
     TabOrder = 1
     OnChange = pcExportChange
+    ExplicitWidth = 1178
+    ExplicitHeight = 589
     object tsCode: TTabSheet
       Caption = '.'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -854,7 +853,6 @@ object frmExport: TfrmExport
           ReadOnly = True
           ScrollBars = ssVertical
           TabOrder = 0
-          Zoom = 100
           OnMouseWheelDown = reExportMouseWheelDown
           OnMouseWheelUp = reExportMouseWheelUp
         end
@@ -871,10 +869,6 @@ object frmExport: TfrmExport
     object tsBinary: TTabSheet
       Caption = '.'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -884,6 +878,7 @@ object frmExport: TfrmExport
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 0
+        ExplicitHeight = 561
         object gbSourceBinary: TGroupBox
           Left = 15
           Top = 8
@@ -901,7 +896,7 @@ object frmExport: TfrmExport
             OnClick = sbBinaryDataRowsClick
           end
           object sbBinaryDataColumns: TSpeedButton
-            Left = 93
+            Left = 97
             Top = 24
             Width = 75
             Height = 25
@@ -1019,8 +1014,8 @@ object frmExport: TfrmExport
             OnClick = sbLSBLeftClick
           end
           object sbBinaryLSBRight: TSpeedButton
-            Left = 93
-            Top = 24
+            Left = 97
+            Top = 22
             Width = 75
             Height = 25
             GroupIndex = 1
@@ -1199,6 +1194,17 @@ object frmExport: TfrmExport
             TabOrder = 1
           end
         end
+        object CheckBox1: TCheckBox
+          Left = 216
+          Top = 248
+          Width = 97
+          Height = 17
+          Caption = 'Custom header'
+          Checked = True
+          State = cbChecked
+          TabOrder = 6
+          OnClick = CheckBox1Click
+        end
       end
       object mBinary: TMemo
         Left = 409
@@ -1214,6 +1220,8 @@ object frmExport: TfrmExport
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 1
+        ExplicitWidth = 761
+        ExplicitHeight = 561
       end
     end
   end

@@ -1,2 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject/>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2023/07/18 19:38:24.000.747,=F:\Software_dev\Delphi\LedMatrixStudio\code\units\VFW.PAS</Transaction>
+    <Transaction>2023/07/18 19:52:58.000.766,F:\Software_dev\Delphi\LedMatrixStudio\code\units\VFW.PAS=</Transaction>
+    <Transaction>2023/07/18 19:54:00.000.177,=F:\Software_dev\Delphi\LedMatrixStudio\code\classes\VFW.PAS</Transaction>
+    <Transaction>2023/07/18 20:03:59.000.408,=F:\Software_dev\Delphi\LedMatrixStudio\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:04:46.000.740,F:\Software_dev\Delphi\LedMatrixStudio\code\Unit1.pas=F:\Software_dev\Delphi\LedMatrixStudio\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:06:37.000.978,F:\Software_dev\Delphi\LedMatrixStudio\code\classes\VFW.PAS=</Transaction>
+    <Transaction>2023/07/18 20:06:57.000.191,=F:\Software_dev\Delphi\LedMatrixStudio\code\classes\vfw.pas</Transaction>
+    <Transaction>2023/07/18 20:07:21.000.627,F:\Software_dev\Delphi\LedMatrixStudio\code\classes\vfw.pas=</Transaction>
+    <Transaction>2023/07/18 20:07:45.000.033,=F:\Software_dev\Delphi\LedMatrixStudio\code\vfw.pas</Transaction>
+    <Transaction>2023/07/18 20:08:10.000.810,F:\Software_dev\Delphi\LedMatrixStudio\code\vfw.pas=</Transaction>
+    <Transaction>2023/07/18 20:08:29.000.532,=F:\Software_dev\Delphi\LedMatrixStudio\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:08:43.000.786,F:\Software_dev\Delphi\LedMatrixStudio\code\classes\vfw.pas=F:\Software_dev\Delphi\LedMatrixStudio\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:10:02.000.832,=F:\Software_dev\Delphi\LedMatrixStudio\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:10:19.000.459,F:\Software_dev\Delphi\LedMatrixStudio\code\Unit1.pas=F:\Software_dev\Delphi\LedMatrixStudio\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:10:28.000.832,F:\Software_dev\Delphi\LedMatrixStudio\code\vfw.pas=F:\Software_dev\Delphi\LedMatrixStudio\code\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:11:16.000.285,F:\Software_dev\Delphi\LedMatrixStudio\code\vfw2.pas=F:\Software_dev\Delphi\LedMatrixStudio\code\vfw.pas</Transaction>
+    <Transaction>2023/07/18 20:11:28.000.239,F:\Software_dev\Delphi\LedMatrixStudio\code\Unit1.pas=F:\Software_dev\Delphi\LedMatrixStudio\code\vfw2.pas</Transaction>
+    <Transaction>2023/07/18 20:13:20.000.066,=F:\Software_dev\Delphi\LedMatrixStudio\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:13:27.000.585,F:\Software_dev\Delphi\LedMatrixStudio\code\classes\Unit1.pas=F:\Software_dev\Delphi\LedMatrixStudio\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:13:46.000.461,F:\Software_dev\Delphi\LedMatrixStudio\code\classes\vfw.pas=F:\Software_dev\Delphi\LedMatrixStudio\code\classes\Unit1.pas</Transaction>
+    <Transaction>2023/07/18 20:14:17.000.173,F:\Software_dev\Delphi\LedMatrixStudio\code\classes\Unit123213.pas=F:\Software_dev\Delphi\LedMatrixStudio\code\classes\vfw.pas</Transaction>
+    <Transaction>2023/07/18 20:15:02.000.322,F:\Software_dev\Delphi\LedMatrixStudio\code\classes\Unit1.pas=F:\Software_dev\Delphi\LedMatrixStudio\code\classes\Unit123213.pas</Transaction>
+    <Transaction>2023/07/18 20:16:17.000.040,F:\Software_dev\Delphi\LedMatrixStudio\code\classes\vfw.pas=F:\Software_dev\Delphi\LedMatrixStudio\code\classes\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

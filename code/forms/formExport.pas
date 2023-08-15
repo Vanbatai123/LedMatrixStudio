@@ -25,7 +25,7 @@ uses
 
   example_fastLED,
 
-  matrixconstants;
+  matrixconstants, matrix;
 
 
 type
@@ -141,6 +141,7 @@ type
     Panel4: TPanel;
     reExport: TRichEdit;
     pPreviewStatus: TPanel;
+    CheckBox1: TCheckBox;
     procedure sbDataRowsClick(Sender: TObject);
     procedure FormConstrainedResize(Sender: TObject; var MinWidth, MinHeight, MaxWidth, MaxHeight: Integer);
     procedure FormCreate(Sender: TObject);
@@ -170,6 +171,8 @@ type
     procedure reExportMouseWheelUp(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
     procedure FormResize(Sender: TObject);
+    procedure mBinaryChange(Sender: TObject);
+    procedure CheckBox1Click(Sender: TObject);
   private
     FMatrixMode : TMatrixMode;
 
@@ -737,6 +740,12 @@ var
   lUnique : TStringList;
   lOutput : TStringList;
   t : integer;
+  i: Integer;
+  //custom header variant
+
+   eff_num, eff_w, eff_h, eff_frame: Integer;
+   s, s2 : string;
+   eff_addr : LongWord;
 
   procedure ClearForRetry;
    begin
@@ -797,6 +806,51 @@ begin
       // =======================================================================
 
       mBinary.Lines.Clear;
+
+      if CheckBox1.Checked then begin
+        s2 := '';
+        eff_w := MatrixMain.Matrix.Width;
+        eff_h := MatrixMain.Matrix.Height;
+        eff_addr := 776;
+
+        // custom header
+        for i := 0 to EffectTotal do begin  // get number of effects
+          if EffectsArr[i*2+1] = 0  then begin
+            s := IntToHex(Byte(i)) + ' '; // number of effects
+            s := s + '00 ';                       // eff_last
+            s := s + IntToHex(Byte(eff_w)) + ' ';  // w
+            s := s + IntToHex(Byte(eff_h)) + ' ';  // h
+            s := s + '00 00 03 08 ';                       // first address   776
+  //        ShowMessage(s);
+            break;
+          end
+        end;
+
+        for i := 0 to EffectTotal - 1 do begin  // add data to binary preview
+          if EffectsArr[i*2+1] <> 0 then begin
+            eff_frame := EffectsArr[i*2+1] - EffectsArr[i*2] + 1;
+//            ShowMessage(eff_frame.ToString);
+            eff_addr := eff_addr + 3*eff_w*eff_h* eff_frame;
+  //          ShowMessage(eff_addr.ToString);
+
+              s2 := s2 + IntToHex(Byte(eff_addr Shr 24)) + ' ';
+              s2 := s2 + IntToHex(Byte(eff_addr Shr 16)) + ' ';
+              s2 := s2 + IntToHex(Byte(eff_addr Shr 8)) + ' ';
+              s2 := s2 + IntToHex(Byte(eff_addr Shr 0)) + ' ';
+          end
+          else
+          begin
+            s2 := s2 + '00 00 00 00 ';
+  //          s := s + s2; // effects address
+          end;
+        end;
+
+        // add 8 byte to fill 256 bytes
+//        s2 := s2 + '00 00 00 00 00 00 00 00 ';
+        s := s + s2; // effects address
+
+        mBinary.Lines.Add(s);
+      end;
 
       mBinary.Lines.BeginUpdate;
       for t:= 0 to lOutput.Count - 1 do
@@ -1103,6 +1157,11 @@ begin
     eeo.BinaryFileContents := bfSingleFrame;
 end;
 
+
+procedure TfrmExport.CheckBox1Click(Sender: TObject);
+begin
+  PreviewBinary;
+end;
 
 procedure TfrmExport.CreateBinaryExportOptions;
 var
@@ -1565,6 +1624,11 @@ begin
     MessageDlg(GLanguageHandler.Text[kErrorLoadingProfile], mtError, [mbOK], 0);
 end;
 
+
+procedure TfrmExport.mBinaryChange(Sender: TObject);
+begin
+  Preview;
+end;
 
 procedure TfrmExport.pcExportChange(Sender: TObject);
 begin

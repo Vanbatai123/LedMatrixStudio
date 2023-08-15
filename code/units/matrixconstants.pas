@@ -33,7 +33,7 @@ type
   TLoadMode        = (lmNew, lmAppend, lmMergeBottomPriority, lmMergeTopPriority, lmMergeNewLayer, lmMergeCurrentLayer);
 
   TLoadData        = (ldUnknown,
-                      ldLoadBlockStartHeader, ldLoadBlockStartDeadPixel, ldLoadBlockBegin, ldLoadBlockEnd, ldLoadBlockBeginLayout, ldLoadBlockEndLayout, ldLoadBlockStartColours,
+                      ldLoadBlockStartHeader, ldLoadBlockStartDeadPixel, ldLoadBlockBegin, ldLoadBlockEnd, ldLoadBlockBeginLayout, ldLoadBlockEndLayout, ldLoadBlockStartColours, ldLoadEffects,
                       ldLoadHeaderSource, ldLoadHeaderSourceLSB, ldLoadHeaderSourceDirection, ldLoadHeaderPadMode, ldLoadHeaderHexFormat, ldLoadHeaderHexOutput, ldLoadHeaderBrackets,
                       ldLoadHeaderDataSource, ldLoadHeaderOrientation, ldLoadHeaderScanDirection, ldLoadHeaderLSB, ldLoadHeaderLanguage, ldLoadHeaderNumberFormat,  ldLoadHeaderNumberSize, ldLoadHeaderLineContent, ldLoadHeaderLineCount, ldLoadHeaderRGBMode, ldLoadHeaderRGBChangePixels, ldLoadHeaderRGBChangeColour, ldLoadHeaderOptimise,
                       ldLoadHeaderMatrixComment, ldLoadHeaderRGBBackground, ldLoadHeaderASCIIIndex, ldLoadHeaderAutomationFile,

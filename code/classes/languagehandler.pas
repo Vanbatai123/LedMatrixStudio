@@ -573,8 +573,9 @@ const
   kGradientFlip = 548;
   kAnimationSpeed = 549;
   kAnimationSpeedHelp = 550;
+  kImportFromAVI = 551;
 
-  kLanguageConstantCount = 551;
+  kLanguageConstantCount = 552;
   
   
 {$ENDREGION}
@@ -635,7 +636,7 @@ var
 begin
   Result := True;
 //  ShowMessage(FAppPath);
-  lFileName := FAppPath + '\code\language\' + 'English' + '.txt';
+  lFileName := FAppPath + '\language\' + 'English' + '.txt';
 
   if FileExists(lFileName) then begin
 //    t := 0;
@@ -651,7 +652,7 @@ begin
 
      // inc(t);
     end;
-
+//    ShowMessage(Text[551]);
     CloseFile(tf);
 
     // ======================================================================

@@ -15,7 +15,7 @@ unit thematrix;
 interface
 
 
-uses System.UITypes, ExtCtrls, classes, controls, types, sysutils, graphics, math,
+uses  System.UITypes, ExtCtrls,Winapi.Windows, classes, controls, types, sysutils, graphics, math,
      contnrs, System.Generics.Collections, Vcl.Imaging.GIFImg, Vcl.StdCtrls, Vcl.Forms,
 
      fileconstants, matrixconstants, importdata, drawingdata, languagehandler,
@@ -26,7 +26,9 @@ uses System.UITypes, ExtCtrls, classes, controls, types, sysutils, graphics, mat
 
      xglobal, colours,
 
-     ActionObject;
+     ActionObject,
+
+    VFW;
 
 
 type
@@ -377,7 +379,7 @@ type
     function    ExportToBitmap(aFileName : string): boolean;
     function    ExportAnimationToBitmap(aFileName : string): boolean;
 
-    procedure   SaveAnimation(aFilename : string; aTED : TImportData; aEEO : TExportOptions; aColours : TColours);
+    procedure   SaveAnimation(aFilename : string; aTED : TImportData; aEEO : TExportOptions; aColours : TColours; a2 : array of Integer);
     procedure   SaveFont(aFilename : string; aTED : TImportData; aEEO : TExportOptions);
     procedure   SaveAsFont(aFilename : string);
     procedure   SaveAsRGBFont(aFilename : string);
@@ -388,6 +390,7 @@ type
     function    LoadLEDMatrixData(aFileName : string; var aEEO : TExportOptions; aLoadMode : TLoadMode; aStartFrame : integer): TImportData;
 
     function    ImportFromGIF(aFileName : string): TImportData;
+    function    ImportFromAVI(aFileName : string): TImportData;
     procedure   ExportToGIF(aBackground, aPixelSize, aPixelShape, aAnimationSpeed : integer; aFileName : string);
 
     procedure   ClearUserBuffers;
@@ -612,6 +615,7 @@ begin
   MatrixLayers            := TObjectList<TLayer>.Create;
 
   lLayer := TLayer.Create(GLanguageHandler.Text[kBottomLayer]);
+//  ShowMessage(lLayer.ToString);
   MatrixLayers.Add(lLayer);
 
   // ===========================================================================
@@ -5373,12 +5377,16 @@ function TTheMatrix.LoadDataParameterType(const s : string; aHeaderMode, aMatrix
 begin
   Result := ldUnknown;
 
+//  ShowMessage(s);
+
   if Pos('header', s) <> 0 then
     Result := ldLoadBlockStartHeader
   else if Pos('deadpixel', s) <> 0 then
     Result := ldLoadBlockStartDeadPixel
   else if Pos('colours', s) <> 0 then
     Result := ldLoadBlockStartColours
+  else if Pos('effects', s) <> 0 then
+    Result := ldLoadEffects
   else if s[1] = kDataBlockStart then
     Result := ldLoadBlockBegin
   else if s[1] = kDataBlockEnd then
@@ -5693,7 +5701,8 @@ begin
 end;
 
 
-procedure TTheMatrix.SaveAnimation(aFileName : string; aTED : TImportData; aEEO : TExportOptions; aColours : TColours);
+// edit here
+procedure TTheMatrix.SaveAnimation(aFileName : string; aTED : TImportData; aEEO : TExportOptions; aColours : TColours; a2 : array of integer);
 var
   s : string;
   tf : TextFile;
@@ -5819,15 +5828,15 @@ begin
 
     writeln(tf, kAnimDeadPixelData + ':' + s);
   end;
-  
+
   writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
-  writeln(tf, '{' + kFileHeaderEffects);
-
-  
-  writeln(tf, kDataBlockEnd);
+  writeln(tf, '{' + kFileHeaderEffects);//{effects
+  for i := 0 to effectTotal*2-1 do
+    writeln(tf, a2[i]);
+  writeln(tf, kDataBlockEnd);//}
 
   // ===========================================================================
 
@@ -6271,6 +6280,7 @@ var
   s,v : string;
   lHeaderMode, fontmode, deadpixelmode, lMatrixDataMode, lLayerMode, lColoursMode : boolean;
   lMatrix : TMatrix;
+  eIndex  : Integer;
 
   function SafeStringToBool(v : string): boolean;
   begin
@@ -6358,7 +6368,6 @@ begin
 
     // ===========================================================================
     // ===========================================================================
-
     while not(eof(tf)) do begin
       readln(tf, s);
 
@@ -6366,6 +6375,18 @@ begin
         v := Copy(s, 3, length(s) - 2);
 
         case LoadDataParameterType(LowerCase(s), lHeaderMode, lMatrixDataMode, deadpixelmode, lLayerMode, lColoursMode) of
+
+          ldLoadEffects                 : begin
+
+                                            readln(tf, s);
+                                            eIndex := 0;
+                                            while s <> kDataBlockEnd  do begin
+                                              EffectsArr[eIndex]:=StrToInt(s);
+                                              readln(tf, s);
+                                              eIndex := eIndex+1;
+                                            end;
+                                         end;
+
           ldLoadBlockStartHeader        : begin
                                            if UpperCase(s) = '{' + UpperCase(kFileHeaderFontHeader) then
                                              fontmode := True
@@ -8270,15 +8291,22 @@ begin
 
         if lGIF.Images[t].Empty then                                            // ignore bad frames
           Continue;
-
+//        ShowMessage(lTempFrame.Canvas.ToString);
+//        if t=0 then
+//          lTempFrame.SaveToFile('C:\Users\taivb\OneDrive\Desktop\code\before.bmp');
         lGR.Draw(lTempFrame.Canvas, lTempFrame.Canvas.ClipRect);
+//        if t=0 then
+//        lTempFrame.SaveToFile('C:\Users\taivb\OneDrive\Desktop\code\after.bmp');
 
         for y := 0 to lGIF.Height - 1 do begin
           scanLine := lTempFrame.ScanLine[y];
 
           for x := 0 to lGIF.Width - 1 do
             MatrixLayers[FCurrentLayer].Frames.Last.Grid[x, y] := (scanline[x].rgbtBlue shl 16) + (scanline[x].rgbtGreen shl 8) + (scanline[x].rgbtred);
+
         end;
+
+//        ShowMessage(MatrixLayers.Count.ToString+'   ' + t.ToString);
 
         for lLayer := 0 to MatrixLayers.Count - 1 do begin
           lMatrix := TMatrix.Create(lGIF.Width, lGIF.Height, mtRGB, FRGBBackground);
@@ -8319,6 +8347,212 @@ begin
 
   FPaintBox.Invalidate;
 end;
+
+// based on code from this stack overflow question
+// https://stackoverflow.com/questions/36444024/how-to-extract-frames-from-this-gif-image-access-violation-in-tgifrenderer-dra
+function TTheMatrix.ImportFromAVI(aFileName : string): TImportData;
+type
+  TRGBTriple = packed record
+    rgbtBlue: Byte;
+    rgbtGreen: Byte;
+    rgbtRed: Byte;
+    rgbtA: Byte;
+  end;
+
+  PRGBTripleArray = ^TRGBTripleArray;
+  TRGBTripleArray = array[0..4095] of TRGBTriple;
+
+
+var
+//  lGIF : TGIFImage;
+  lTempFrame: TBitmap;
+  t, x, y, lHeight, lWidth, lLayer: integer;
+//  lGR: TGIFRenderer;
+  lMatrix : TMatrix;
+  scanLine : PRGBTripleArray;
+
+  Error: Cardinal;
+  pFile: PAVIFile;
+  AVIStream: PAVIStream;
+  gapgf: PGETFRAME;
+  lpbi: PBITMAPINFOHEADER;
+  bits: PChar;
+  hBmp: HBITMAP;
+  AviInfo: TAVIFILEINFOW;
+  sError: string;
+  DC_Handle: HDC;
+
+begin
+  ClearAllFrames;
+
+  // ===========================================================================
+
+  Result.ImportOk        := True;
+  Result.Source          := -1;
+  Result.SourceLSB       := -1;
+//  Result.SourceDirection := -1;
+  Result.MatrixMode      := mtMono;
+  Result.RGBImport       := False;
+  Result.Preview.Enabled := MatrixMain.PreviewActive;
+
+  // ===========================================================================
+
+//  lGIF := TGIFImage.Create;
+
+  AVIFileInit;
+
+  // The AVIFileOpen function opens an AVI file
+  Error := AVIFileOpen(pFile, PAnsiChar(AnsiString(aFileName)), 0, nil);
+  if Error <> 0 then
+  begin
+    AVIFileExit;
+    case Error of
+      AVIERR_BADFORMAT: sError := 'The file couldn''t be read';
+      AVIERR_MEMORY: sError := 'The file could not be opened because of insufficient memory.';
+      AVIERR_FILEREAD: sError := 'A disk error occurred while reading the file.';
+      AVIERR_FILEOPEN: sError := 'A disk error occurred while opening the file.';
+    end;
+//    ShowMessage(Error.ToHexString);
+    ShowMessage(sError);
+    Exit;
+  end;
+//  ShowMessage('123123');
+
+  // AVIFileInfo obtains information about an AVI file
+  if AVIFileInfo(pFile, @AVIINFO, SizeOf(AVIINFO)) <> AVIERR_OK then
+  begin
+    // Clean up and exit
+    AVIFileRelease(pFile);
+    AVIFileExit;
+    Exit;
+  end;
+
+  // Show some information about the AVI
+//  ShowMessage('AVI Width : ' + IntToStr(AVIINFO.dwWidth));
+//  ShowMessage('AVI Height : ' + IntToStr(AVIINFO.dwHeight));
+//  ShowMessage('AVI Length : ' + IntToStr(AVIINFO.dwLength));
+
+  // Open a Stream from the file
+  Error := AVIFileGetStream(pFile, AVIStream, streamtypeVIDEO, 0);
+//  ShowMessage('get stream' + Error.ToHexString);
+  if Error <> AVIERR_OK then
+  begin
+    // Clean up and exit
+    AVIFileRelease(pFile);
+    AVIFileExit;
+    Exit;
+  end;
+//  ShowMessage('get stream OK!!!');
+
+  // Prepares to decompress video frames
+  gapgf := AVIStreamGetFrameOpen(AVIStream, nil);
+  if gapgf = nil then
+  begin
+    AVIStreamRelease(AVIStream);
+    AVIFileRelease(pFile);
+    AVIFileExit;
+    Exit;
+  end;
+
+  try
+    lTempFrame := TBitmap.Create;
+    lTempFrame.PixelFormat := pf24Bit;
+    lTempFrame.Height := AVIINFO.dwHeight;
+    lTempFrame.Width  := AVIINFO.dwWidth;
+
+    lHeight    := AVIINFO.dwHeight;
+    lWidth     := AVIINFO.dwWidth;
+
+    if (lHeight > 256) or (lWidth > 256) then begin
+      Result.ImportOk    := False;
+      Result.ErrorString := GLanguageHandler.Text[kGIFDimensionsAreTooLarge] + ' ' + IntToStr(lWidth) + ' x ' + IntToStr(lHeight) + ').';
+
+      Exit;
+    end;
+
+    Matrix.Width  := AVIINFO.dwWidth;
+    Matrix.Height := AVIINFO.dwHeight;
+
+//    ShowMessage( AVIINFO.dwWidth.ToString);
+//    ShowMessage( AVIINFO.dwHeight.ToString);
+
+    try
+      for t := 0 to AVIINFO.dwLength -1 do begin
+        // Read current Frame
+        // AVIStreamGetFrame Returns the address of a decompressed video frame
+        lpbi := AVIStreamGetFrame(gapgf, t);
+        if lpbi = nil then
+        begin
+          AVIStreamGetFrameClose(gapgf);
+          AVIStreamRelease(AVIStream);
+          AVIFileRelease(pFile);
+          AVIFileExit;
+          Exit;
+        end;
+
+        bits := Pointer(Integer(lpbi) + SizeOf(TBITMAPINFOHEADER));
+
+        DC_Handle := CreateDC('Display', nil, nil, nil);
+        try
+          hBmp := CreateDIBitmap(DC_Handle, // handle of device context
+            lpbi^, // address of bitmap size and format data
+            CBM_INIT, // initialization flag
+            bits, // address of initialization data
+            PBITMAPINFO(lpbi)^, // address of bitmap color-format data
+            DIB_RGB_COLORS); // color-data usage
+        finally
+          DeleteDC(DC_Handle);
+        end;
+
+        lTempFrame.Handle := hBmp;
+//        lTempFrame.SaveToFile('C:\Users\taivb\OneDrive\Desktop\code\a' + t.ToString + '.bmp');
+        for y := 0 to AVIINFO.dwHeight - 1 do begin
+          scanLine := lTempFrame.ScanLine[y];
+
+          for x := 0 to AVIINFO.dwWidth - 1 do
+          begin
+            MatrixLayers[FCurrentLayer].Frames.Last.Grid[x, y] := (scanline[x].rgbtBlue shl 16) + (scanline[x].rgbtGreen shl 8) + (scanline[x].rgbtred);
+          end;
+        end;
+
+        for lLayer := 0 to MatrixLayers.Count - 1 do begin
+          lMatrix := TMatrix.Create(AVIINFO.dwWidth, AVIINFO.dwHeight, mtRGB, FRGBBackground);
+          MatrixLayers[lLayer].Frames.Add(lMatrix);
+        end;
+      end;
+
+    finally
+      AVIStreamGetFrameClose(gapgf);
+      AVIStreamRelease(AVIStream);
+      AVIFileRelease(pfile);
+      AVIFileExit;
+    end;
+
+  finally
+  end;
+
+  for lLayer := 0 to MatrixLayers.Count - 1 do
+    MatrixLayers[lLayer].Frames.Delete(MatrixLayers[lLayer].Frames.Count - 1);
+
+  FCurrentFrame := 1;
+
+  CopyCurrentFrameToDrawBuffer;
+
+  Result.MatrixMode       := mtRGB;
+  Result.NewWidth         := lWidth;
+  Result.NewHeight        := lHeight;
+  Result.BackgroundColour := FRGBBackground;
+
+  Result.MaxFrames        := MatrixLayers[CPermanentLayer].Frames.Count - 1;
+  Result.FontMode         := False;
+
+  Matrix.Available := True;
+
+  MatrixLayerChange;
+
+  FPaintBox.Invalidate;
+end;
+
 
 
 // if you decide to tweak the export yourself then don't bother with the Embarcadero docs, they are worse
